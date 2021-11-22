@@ -28,57 +28,37 @@ python代码实现
 ```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
 library(reticulate)
-use_python("/usr/bin/python")
+use_python("C://Python")
 ```
+
 ```{python}
-import networkx as nx
-import numpy as np
 import random
-import math
- 
-if __name__ == '__main__':
-    m_0 = 4
-    m = 2
-    t = 496
-    NUM = m_0 + t
-    g = nx.Graph()
-    N = list(range(m_0))
-    g.add_nodes_from(N)
-    k = []                   #   保存各节点的度
-    k_0 = m-1
-    p_k = []                 #   保存各节点的优先概率
-    p_0 = 1/m_0
-    k_all = 0
-    for i in range(m_0):          #   初始的完全图    
-        p_k.append(p_0)
-        k.append(k_0)
-        k_all += k_0
-        for j in range(i,m_0):
-            g.add_edge(i,j)
- 
-    for i in range(t):
-        m_0_t = m_0 + i               #   t 时刻的节点数
-        m_0_1 = m_0 + i - 1         #   t-1 时刻的节点数
-        g.add_node(m_0_t)
-        # k_all = 0
-        # for j in range(m_0_t_1):
-        #     k_all += k[j]
-        add_edge = 1
-        while(add_edge<=m):
-            for j in range(m_0_1):       #   按照节点顺序比较，人为使得标签小的节点度偏大
-                p_random = random.random()       #   是否应该从概率最大的开始比较
-                if p_random <= p_k[j] and add_edge <= m:
-                    k_j = k[j]
-                    p_k_j = p_k[j]
-                    g.add_edge(m_0_t,j)
-                    add_edge += 1
-                    k[j] = k_j + 1
-                    k_all += 2                 #   增加一条边，度增加 2
-                    p_k[j] = (k_j + 1)/k_all
- 
-        k.append(2)
-        p = 2/k_all
-        p_k.append(p)
+
+# 初始化变量
+network = {0:[1]}
+nodes = 1000
+p = 0.1
+num = 1
+
+for i in range(1, nodes):
+    network[i] = []
+    x = random.random()
+    accu_prob = 0.0
+    num += 1 
+
+    # 概率小于初始概率则新建实体
+    if x <= p:
+        network[i] = [1]
+    else:
+        # 反之则遍历value计算各实体概率
+        for key,value in network.items():
+            accu_prob += len(value) / num
+            if x <= accu_prob:
+                network[key].append(1)
+                break
+
+node_list = [len(value) for value in network.values()]
+![统计结果图](figure/zldz_figure3.png)   
 ```
 
 富人就相当于度更多的结点，因此，更多的结点便会优先连接这个结点。这就类似于优先连接模型。
